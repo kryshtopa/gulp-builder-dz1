@@ -11,6 +11,7 @@ global.$ = {
   },
   gulp: require('gulp'),
   del: require('del'),
+  spritesmith: require('gulp.spritesmith'),
   browserSync: require('browser-sync').create(),
   gp: require('gulp-load-plugins')()
 };
@@ -21,12 +22,14 @@ $.path.task.forEach(function(taskPath) {
 
 $.gulp.task('default', $.gulp.series(
   'clean',
+  'sprite',
   $.gulp.parallel(
     'sass',
     'pug',
     'js:foundation',
     'js:process',
     'copy:image',
+    'copy:fonts',
     'css:foundation',
     'sprite:svg'
   ),
@@ -34,4 +37,16 @@ $.gulp.task('default', $.gulp.series(
     'watch',
     'serve'
   )
+));
+
+$.gulp.task('upload', $.gulp.series(
+  'dist:clean',
+  $.gulp.parallel(
+    'dist:css',
+    'dist:js',
+    'dist:images',
+    'dist:fonts',
+    'dist:templates'
+  ),
+  'sftp'
 ));
